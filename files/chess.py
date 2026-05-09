@@ -1,27 +1,33 @@
-board = [["empty" for x in range(8)] for y in range(8)]
+import kivy
+from kivy.app import App
+from kivy.uix.gridlayout import GridLayout
+from kivy.uix.button import Button
 
-# filling out board
-board[0][0] = "blackRook";
-board[0][1] = "blackKnight";
-board[0][2] = "blackBishop";
-board[0][3] = "blackQueen";
-board[0][4] = "blackKing";
-board[0][5] = "blackBishop";
-board[0][6] = "blackKnight";
-board[0][7] = "blackRook";
-for x in range(8):
-   board[1][x] = "blackPawn";
-for x in range(8):
-   board[6][x] = "whitePawn";
-board[7][0] = "whiteRook";
-board[7][1] = "whiteKnight";
-board[7][2] = "whiteBishop";
-board[7][3] = "whiteQueen";
-board[7][4] = "whiteKing";
-board[7][5] = "whiteBishop";
-board[7][6] = "whiteKnight";
-board[7][7] = "whiteRook";
+import board
+import piece
 
-for space in board:
-   print(space);
+class Main(App):
+   def __init__(self, myBoard, **kwargs):
+      super().__init__(**kwargs)
+      self.myBoard = myBoard
 
+   def build(self):
+      ## for starters, board has text equal to 
+      grid = GridLayout(cols=8)
+
+      for x in range(8):
+         for y in range(8):
+            # Each odd button to have background white
+            # start from 0 so its actually even
+            # background is white white x is even and y is even and when x is odd and y is odd
+            if (y % 2 == 0 and x % 2 == 0) or (y % 2 == 1 and x % 2 == 1):
+               grid.add_widget(Button(
+                  background_color = (5,5,5)
+                  ))
+            else:
+               grid.add_widget(Button(background_color = (1.7,0.7,0.6)))
+      return grid
+
+
+myBoard = board.Board()
+Main(App).run()
