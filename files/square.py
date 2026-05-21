@@ -1,9 +1,9 @@
 class Square():
    def __init__(self, type=None, colour=None, no=None):
-      self.symbol = '▢'
       self.type = type
       self.colour = colour
       self.no = no
+      self.symbol = '▢'
 
       if (self.colour == None):
          self.symbol = '▢'
@@ -37,5 +37,14 @@ class Square():
                self.symbol = '♟'
       pass
    
+   def getType(self):
+      return self.type
+
+   def getColour(self):
+      return self.colour
+   
+   def getNo(self):
+      return self.no
+
    def getSymbol(self):
       return self.symbol

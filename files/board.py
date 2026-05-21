@@ -37,6 +37,9 @@ class Board():
          print()
       print("  a b c d e f g h")
 
-   def checkForPiece(self, letter, no):
-      
-      return
+   def checkForPiece(self, row, column):
+      thePiece = self.board[row, column]
+      if thePiece.getType() is None:
+         return None
+      else:
+         return thePiece
