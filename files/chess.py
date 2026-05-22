@@ -4,14 +4,14 @@ import square
 LIST_OF_VALID_COLUMNS = list(map(chr,range(97, 105)))
 LIST_OF_VALID_ROWS = list(range(1,9))
 COLUMN_EQUIVILENT_NO = {
-   'a': 1, 'A': 1,
-   'b': 2, 'B': 2,
-   'c': 3, 'C': 3,
-   'd': 4, 'D': 4,
-   'e': 5, 'E': 5,
-   'f': 6, 'F': 6,
-   'g': 7, 'G': 7,
-   'h': 8, 'H': 8
+   'a': 1,
+   'b': 2,
+   'c': 3,
+   'd': 4,
+   'e': 5,
+   'f': 6,
+   'g': 7,
+   'h': 8
 }
 
 def checkForValidSquare(row, column):
@@ -32,7 +32,6 @@ myBoard = board.Board()
 myBoard.printBoard()
 
 loop = True
-# fix
 while (loop):
    print("White's turn. Pick a square:",  end=" ")
    pieceInput = input()
@@ -40,12 +39,31 @@ while (loop):
       row = int(pieceInput[1])
       column = pieceInput[0].lower()
       if checkForValidSquare(row, column) == True:
-         realRowValue = row - 1
-         realColumnValue = COLUMN_EQUIVILENT_NO(column) - 1
-         aSquare = myBoard.checkForPiece(realRowValue, realColumnValue)
-         if aSquare is not None:
+         actualRow = row - 1
+         actualColumn = COLUMN_EQUIVILENT_NO[column] - 1
+         if myBoard.isThereAPieceHere(actualRow, actualColumn) == True:
             loop = False
    except:
       print("Invalid row")
-# -----------------------------------------------------------------------
-   
+
+## pick a spot, if tile with the same piece, can't move. Overtake opposite piece.
+loop = True
+while (loop):
+   print("Pick a spot to move your piece. Pick a square:",  end=" ")
+   pieceInput = input()
+   try:
+      newRow = int(pieceInput[1])
+      newColumn = pieceInput[0].lower()
+      if checkForValidSquare(newRow, newColumn) == True:
+         actualNewRow = newRow - 1
+         actualNewColumn = COLUMN_EQUIVILENT_NO[newColumn] - 1
+         print(1)
+         if myBoard.canIMoveHere(actualRow, actualColumn, actualNewRow, actualNewColumn) == True:
+            myBoard.movePiece(actualRow, actualColumn, actualNewRow, actualNewColumn)
+            loop = False
+         else:
+            print("Can't move here. ")
+      else:
+         print("Invalid tile, try again.")
+   except:
+      print("Invalid row")

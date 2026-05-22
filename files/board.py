@@ -37,9 +37,32 @@ class Board():
          print()
       print("  a b c d e f g h")
 
-   def checkForPiece(self, row, column):
-      thePiece = self.board[row, column]
+   def returnPiece(self, row, column):
+      thePiece = self.board[row][column]
       if thePiece.getType() is None:
          return None
       else:
          return thePiece
+      
+   def isThereAPieceHere(self, row, column):
+      piece = self.board[row][column]
+      if piece.getType() is None:
+         return False
+      return True
+      
+   def canIMoveHere(self, oldRow, oldColumn, newRow, newColumn):
+      print(oldRow)
+      print(oldColumn)
+      print(newRow)
+      print(newColumn)
+      myPiece = self.board[oldRow][oldColumn]
+      pieceToOvertake = self.board[newRow][newColumn]
+      if pieceToOvertake.getType() is None:
+         return True
+      elif pieceToOvertake.getColour() is not myPiece.getColour():
+         return True
+      return False
+   
+   def movePiece(self, oldRow, oldColumn, newRow, newColumn):
+      self.board[newRow][newColumn] = self.board[oldRow][oldColumn]
+      self.board[oldRow][oldColumn] = square.Square()
