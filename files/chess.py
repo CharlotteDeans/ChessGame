@@ -31,6 +31,8 @@ def checkForValidSquare(row, column):
 myBoard = board.Board()
 myBoard.printBoard()
 
+print(myBoard.whereCanKingMove(1,0))
+
 loop = True
 while (loop):
    print("White's turn. Pick a square:",  end=" ")

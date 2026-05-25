@@ -5,6 +5,14 @@ class Square():
       self.no = no
       self.symbol = '▢'
 
+      # movement logic - each piece needs different logic made in board to determine where they can move
+      # king can move anywhere one space around it
+      # queen can move anywhere so long as either x or y (but not both) doesnt change or the different between x and y is the same and a piece isnt in the way
+      # bishop can move where either x or y doesnt change and a piece isnt in the way
+      # knight can move anywhere where x+-2 and y+-1 or x+-1 and y+-2
+      # pawn moves up 1 or 2 spaces the first time it moves, 1 after the first time it moves and can move up left or right diagonally if a piece is left or right to it
+      # black pawn is the same but opposite directions
+      
       if (self.colour == None):
          self.symbol = '▢'
       elif (self.colour == "white"):
@@ -47,4 +55,4 @@ class Square():
       return self.no
 
    def getSymbol(self):
-      return self.symbol
+      return self.symbol#
