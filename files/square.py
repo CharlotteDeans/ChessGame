@@ -5,6 +5,10 @@ class Square():
       self.no = no
       self.symbol = '▢'
 
+      if self.type == "test":
+         self.symbol = 'T'
+         pass
+
       # movement logic - each piece needs different logic made in board to determine where they can move
       # king can move anywhere one space around it
       # queen can move anywhere so long as either x or y (but not both) doesnt change or the different between x and y is the same and a piece isnt in the way
@@ -15,7 +19,7 @@ class Square():
       
       if (self.colour == None):
          self.symbol = '▢'
-      elif (self.colour == "white"):
+      elif (self.colour == "black"):
          match self.type:
             case "king":
                self.symbol = '♔'

@@ -31,7 +31,7 @@ def checkForValidSquare(row, column):
 myBoard = board.Board()
 myBoard.printBoard()
 
-print(myBoard.whereCanKingMove(1,0))
+print(myBoard.whereCanQueenMove(3,0))
 
 loop = True
 while (loop):

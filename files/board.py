@@ -6,34 +6,39 @@ class Board():
 
       # filling out board
       board[0][0] = square.Square('rook', 'white', 1)
-      board[0][1] = square.Square('knight', 'white', 1)
-      board[0][2] = square.Square('bishop', 'white', 1)
-      board[0][3] = square.Square('queen', 'white', 0)
-      board[0][4] = square.Square('king', 'white', 0)
-      board[0][5] = square.Square('bishop', 'white', 0)
-      board[0][6] = square.Square('knight', 'white', 0)
-      board[0][7] = square.Square('rook', 'white', 0)
+      board[1][0] = square.Square('knight', 'white', 1)
+      board[2][0] = square.Square('bishop', 'white', 1)
+      board[3][0] = square.Square('queen', 'white', 0)
+      board[4][0] = square.Square('king', 'white', 0)
+      board[5][0] = square.Square('bishop', 'white', 0)
+      board[6][0] = square.Square('knight', 'white', 0)
+      board[7][0] = square.Square('rook', 'white', 0)
       for x in range(8):
-         board[1][x] = square.Square('pawn', 'white', 7 - x) ## counting backwards
+         board[x][1] = square.Square('pawn', 'white', 7 - x) ## counting backwards
       for x in range(8):
-         board[6][x] = square.Square('pawn', 'black', x)
-      board[7][0] = square.Square('rook', 'black', 0)
-      board[7][1] = square.Square('knight', 'black', 0)
-      board[7][2] = square.Square('bishop', 'black', 0)
-      board[7][3] = square.Square('queen', 'black', 0)
-      board[7][4] = square.Square('king', 'black', 0)
-      board[7][5] = square.Square('bishop', 'black', 1)
-      board[7][6] = square.Square('knight', 'black', 1)
+         board[x][6] = square.Square('pawn', 'black', x)
+      board[0][7] = square.Square('rook', 'black', 0)
+      board[1][7] = square.Square('knight', 'black', 0)
+      board[2][7] = square.Square('bishop', 'black', 0)
+      board[3][7] = square.Square('queen', 'black', 0)
+      board[4][7] = square.Square('king', 'black', 0)
+      board[5][7] = square.Square('bishop', 'black', 1)
+      board[6][7] = square.Square('knight', 'black', 1)
       board[7][7] = square.Square('rook', 'black', 1)
       self.board = board
 
    def printBoard(self):
+
+      ## printing the 2d array like usual will make pieces opposite in the x axis
+      # but this doesnt affect actual piece locations and placement will always be 1 less than on board
       rowNum = 8
-      for row in self.board:
+      for y in range(8):
          print(rowNum, end=" ")
          rowNum -= 1
-         for rSquare in row:
-            print(rSquare.getSymbol(), end=" ")
+         for x in range(8):
+            # print x backwards
+            thePiece = self.board[x][7 - y]
+            print(thePiece.getSymbol(), end=" ")
          print()
       print("  a b c d e f g h")
 
@@ -81,7 +86,7 @@ class Board():
       myPiece = self.board[row][column]
       arrayOfSpaces = []
       for x in range(7):
-         rowAboveQueen = row + x
+         rowAboveQueen = row + x + 1
          if rowAboveQueen > 7:
             break
          pieceHere = self.board[rowAboveQueen][column]
@@ -94,7 +99,7 @@ class Board():
             break
 
       for x in range(7):
-         rowBelowQueen = row - x
+         rowBelowQueen = row - (x + 1)
          if rowBelowQueen < 0:
             break
          pieceHere = self.board[rowBelowQueen][column]
@@ -107,7 +112,7 @@ class Board():
             break
       
       for y in range(7):
-         columnRightOfQueen = column + y
+         columnRightOfQueen = column + y + 1
          if columnRightOfQueen > 7:
             break
          pieceHere = self.board[row][columnRightOfQueen]
@@ -120,7 +125,7 @@ class Board():
             break
 
       for y in range(7):
-         columnLeftOfQueen = column - y
+         columnLeftOfQueen = column - (y + 1)
          if columnLeftOfQueen < 0:
             break
          pieceHere = self.board[row][columnLeftOfQueen]
@@ -132,4 +137,65 @@ class Board():
          else:
             break
 
-      ## next: diagonals for queen
+      # +1 to row and column until out of bounds or hit another piece
+      # then +1 row and -1 column, -1 row and +1 column, -1 row and column
+      rowFromQueen = row
+      columnFromQueen = column
+      # up right
+      for spaces in range(7):
+         rowFromQueen += 1
+         columnFromQueen += 1
+         pieceHere = self.board[rowFromQueen][columnFromQueen]
+         if pieceHere.getColour() is None:
+            arrayOfSpaces.append([rowFromQueen, columnFromQueen])
+         elif pieceHere.getColour() is not myPiece.getColour():
+            arrayOfSpaces.append([rowFromQueen, columnFromQueen])
+            break
+         else:
+            break
+
+      rowFromQueen = row
+      columnFromQueen = column
+      # up left
+      for spaces in range(7):
+         rowFromQueen -= 1
+         columnFromQueen += 1
+         pieceHere = self.board[rowFromQueen][columnFromQueen]
+         if pieceHere.getColour() is None:
+            arrayOfSpaces.append([rowFromQueen, columnFromQueen])
+         elif pieceHere.getColour() is not myPiece.getColour():
+            arrayOfSpaces.append([rowFromQueen, columnFromQueen])
+            break
+         else:
+            break
+
+      rowFromQueen = row
+      columnFromQueen = column
+      for spaces in range(7):
+         rowFromQueen += 1
+         columnFromQueen -= 1
+         pieceHere = self.board[rowFromQueen][columnFromQueen]
+         if pieceHere.getColour() is None:
+            arrayOfSpaces.append([rowFromQueen, columnFromQueen])
+         elif pieceHere.getColour() is not myPiece.getColour():
+            arrayOfSpaces.append([rowFromQueen, columnFromQueen])
+            break
+         else:
+            break
+
+      rowFromQueen = row
+      columnFromQueen = column
+      for spaces in range(7):
+         rowFromQueen -= 1
+         columnFromQueen -= 1
+         pieceHere = self.board[rowFromQueen][columnFromQueen]
+         if pieceHere.getColour() is None:
+            arrayOfSpaces.append([rowFromQueen, columnFromQueen])
+         elif pieceHere.getColour() is not myPiece.getColour():
+            arrayOfSpaces.append([rowFromQueen, columnFromQueen])
+            break
+         else:
+            break
+      return arrayOfSpaces
+   
+      ## fix issues with out of bounds spaces
