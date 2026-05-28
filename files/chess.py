@@ -2,7 +2,7 @@ import board
 import square
 
 LIST_OF_VALID_COLUMNS = list(map(chr,range(97, 105)))
-LIST_OF_VALID_ROWS = list(range(1,9))
+LIST_OF_VALID_ROWS = list(range(0,8))
 COLUMN_EQUIVILENT_NO = {
    'a': 1,
    'b': 2,
@@ -28,10 +28,38 @@ def checkForValidSquare(row, column):
       print("Invalid row")
    return False
 
+def inputLoop():
+
+   ## continue this
+   loop = True
+   while (loop):
+      print("White's turn. Pick a square:",  end=" ")
+      pieceInput = input()
+      try:
+         row = returnActualRowValue(pieceInput)
+      except:
+         print("Invalid row, try again.")
+      try:
+         column = returnActualColumnValue(pieceInput)
+      except:
+         print("Invalid column, try again.")
+      
+      if checkForValidSquare(row, column) == True:
+         actualRow = row - 1
+         actualColumn = COLUMN_EQUIVILENT_NO[column] - 1
+         if myBoard.isThereAPieceHere(actualRow, actualColumn) == True:
+            loop = False
+
+def returnActualRowValue(pieceInput):
+   return int(pieceInput[1]) - 1
+
+def returnActualColumnValue(pieceInput):
+   return COLUMN_EQUIVILENT_NO[pieceInput[0].lower()] - 1
+
 myBoard = board.Board()
 myBoard.printBoard()
 
-print(myBoard.whereCanQueenMove(3,0))
+print(myBoard.whereCanQueenMove(3,3))
 
 loop = True
 while (loop):
