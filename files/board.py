@@ -49,8 +49,15 @@ class Board():
          return None
       else:
          return thePiece
-      
+   
+   def isRowOrColumnInBounds(self, num):
+      if num < 0 or num > 7:
+         return False
+      return True
+
    def isThereAPieceHere(self, row, column):
+      if not self.isRowOrColumnInBounds(row) or not self.isRowOrColumnInBounds(column):
+         return False
       piece = self.board[row][column]
       if piece.getType() is None:
          return False
