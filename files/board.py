@@ -80,13 +80,13 @@ class Board():
       print(thePiece.getType())
       print(thePiece.getColour())
 
-   def isRowOrColumnInBounds(self, num):
+   def isXOrYInBounds(self, num):
       if num < 0 or num > 7:
          return False
       return True
 
    def isThereAPieceHere(self, x, y):
-      if not self.isRowOrColumnInBounds(x) or not self.isRowOrColumnInBounds(y):
+      if not self.isXOrYInBounds(x) or not self.isXOrYInBounds(y):
          return False
       piece = self.board[x][y]
       if piece.getType() is None:
@@ -135,6 +135,41 @@ class Board():
    def whereCanBishopMove(self, x, y):
       arrayOfSpaces = self.calculateDiagonalMovement(x, y)
       return arrayOfSpaces
+   
+   def whereCanPawnMoveWithoutTaking(self, x, y):
+      # if pawn's first move, can move 2 spaces
+      arrayOfSpaces = []
+      myPiece = self.board[x][y]
+
+      # arrayOfSpaces = []
+      # for x in range(7):
+      #    xRightOfPiece = x + x + 1
+      #    answer = self.movementPlacementLogic(x, y, xRightOfPiece, y)
+      #    print(answer)
+      #    if self.canIMoveHere2(answer):
+      #       arrayOfSpaces.append([xRightOfPiece, y])
+      #    if self.canIMoveAnymore(answer):
+      #       break
+
+      # where pawn does not take (y+1 and y+2)
+      j = 1
+      if not myPiece.hasPieceMoved():
+         j += 1
+         myPiece.switchPieceMoved()
+      for i in range(j):
+         newY = y + j
+         answer = self.movementPlacementLogic(x,y,x,newY)
+         if self.canIMoveHere2(answer):
+            arrayOfSpaces.append([x,newY])
+         if self.canIMoveAnymore(answer):
+            break
+
+## complete here
+   def whereCanPawnMoveWhileTaking(self,x,y):
+      ## where pawn can only move if it take (x-1,y+1 and x+1,y+1)
+      ## either piece is at this location or this location y-1
+      pass
+
 
    ## when there is another piece 
    def canITakePiece(self,oldX, oldY, newX, newY):

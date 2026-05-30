@@ -4,6 +4,7 @@ class Square():
       self.colour = colour
       self.no = no
       self.symbol = '▢'
+      self.pieceMoved = False
 
       if self.type == "test":
          self.symbol = 'T'
@@ -59,4 +60,10 @@ class Square():
       return self.no
 
    def getSymbol(self):
-      return self.symbol#
+      return self.symbol
+   
+   def switchPieceMoved(self):
+      self.pieceMoved = True
+
+   def hasPieceMoved(self):
+      return self.pieceMoved
