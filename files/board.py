@@ -4,7 +4,35 @@ class Board():
    def __init__(self):
       board = [[square.Square() for x in range(8)] for y in range(8)]
 
+      # row(num)/column(char)
+      # row is y axis and column is x axis
+
+      # # filling out board
+      # board[0][0] = square.Square('rook', 'white', 1)
+      # board[0][1] = square.Square('knight', 'white', 1)
+      # board[0][2] = square.Square('bishop', 'white', 1)
+      # board[0][3] = square.Square('queen', 'white', 0)
+      # board[0][4] = square.Square('king', 'white', 0)
+      # board[0][5] = square.Square('bishop', 'white', 0)
+      # board[0][6] = square.Square('knight', 'white', 0)
+      # board[0][7] = square.Square('rook', 'white', 0)
+      # for y in range(8):
+      #    board[1][y] = square.Square('pawn', 'white', 7 - y) ## counting backwards
+      # for y in range(8):
+      #    board[6][y] = square.Square('pawn', 'black', y)
+      # board[7][0] = square.Square('rook', 'black', 0)
+      # board[7][1] = square.Square('knight', 'black', 0)
+      # board[7][2] = square.Square('bishop', 'black', 0)
+      # board[7][3] = square.Square('queen', 'black', 0)
+      # board[7][4] = square.Square('king', 'black', 0)
+      # board[7][5] = square.Square('bishop', 'black', 1)
+      # board[7][6] = square.Square('knight', 'black', 1)
+      # board[7][7] = square.Square('rook', 'black', 1)
+      # board[3][4] = square.Square('bishop', 'white', 2)
+
       # filling out board
+      # first is char, second is num
+      # x/y - column/row - char/num
       board[0][0] = square.Square('rook', 'white', 1)
       board[1][0] = square.Square('knight', 'white', 1)
       board[2][0] = square.Square('bishop', 'white', 1)
@@ -25,13 +53,10 @@ class Board():
       board[5][7] = square.Square('bishop', 'black', 1)
       board[6][7] = square.Square('knight', 'black', 1)
       board[7][7] = square.Square('rook', 'black', 1)
-      board[3][3] = square.Square('bishop', 'white', 2)
+      board[3][4] = square.Square('bishop', 'white', 2)
       self.board = board
 
    def printBoard(self):
-
-      ## printing the 2d array like usual will make pieces opposite in the x axis
-      # but this doesnt affect actual piece locations and placement will always be 1 less than on board
       rowNum = 8
       for y in range(8):
          print(rowNum, end=" ")
@@ -43,97 +68,102 @@ class Board():
          print()
       print("  a b c d e f g h")
 
-   def returnPiece(self, row, column):
-      thePiece = self.board[row][column]
+   def returnPiece(self, x, y):
+      thePiece = self.board[x][y]
       if thePiece.getType() is None:
          return None
       else:
          return thePiece
    
+   def printPieceDetails(self,x,y):
+      thePiece = self.board[x][y]
+      print(thePiece.getType())
+      print(thePiece.getColour())
+
    def isRowOrColumnInBounds(self, num):
       if num < 0 or num > 7:
          return False
       return True
 
-   def isThereAPieceHere(self, row, column):
-      if not self.isRowOrColumnInBounds(row) or not self.isRowOrColumnInBounds(column):
+   def isThereAPieceHere(self, x, y):
+      if not self.isRowOrColumnInBounds(x) or not self.isRowOrColumnInBounds(y):
          return False
-      piece = self.board[row][column]
+      piece = self.board[x][y]
       if piece.getType() is None:
          return False
       return True
    
    ## change or delete because it's part of bad code
-   def canIMoveHere(self, oldRow, oldColumn, newRow, newColumn):
-      myPiece = self.board[oldRow][oldColumn]
-      pieceToOvertake = self.board[newRow][newColumn]
+   def canIMoveHere(self, oldXValue, oldYValue, newXValue, newYValue):
+      myPiece = self.board[oldXValue][oldYValue]
+      pieceToOvertake = self.board[newXValue][newYValue]
       if pieceToOvertake.getType() is None:
          return True
       elif pieceToOvertake.getColour() is not myPiece.getColour():
          return True
       return False
    
-   def movePiece(self, oldRow, oldColumn, newRow, newColumn):
-      self.board[newRow][newColumn] = self.board[oldRow][oldColumn]
-      self.board[oldRow][oldColumn] = square.Square()
+   def movePiece(self, oldX, oldY, newX, newY):
+      self.board[newX][newY] = self.board[oldX][oldY]
+      self.board[oldX][oldY] = square.Square()
 
-   def whereCanKingMove(self, row, column):
-      myPiece = self.board[row][column]
+   def whereCanKingMove(self, x, y):
+      myPiece = self.board[x][y]
       arrayOfSpaces = []
       for x in range(3):
-         rowInLoop = row - 1 + x
-         if rowInLoop <= 7 and rowInLoop >= 0:
+         xInLoop = x - 1 + x
+         if xInLoop <= 7 and xInLoop >= 0:
             for y in range(3):
-               columnInLoop = column - 1 + y
-               if columnInLoop <= 7 and columnInLoop >= 0:
-                  arrayOfSpaces.append([rowInLoop, columnInLoop])
+               yInLoop = y - 1 + y
+               if yInLoop <= 7 and yInLoop >= 0:
+                  arrayOfSpaces.append([xInLoop, yInLoop])
 
       return arrayOfSpaces
    # queen can move anywhere so long as either x or y (but not both) doesnt change or the different between x and y is the same and a piece isnt in the way
-   def whereCanQueenMove(self, row, column):
-      arrayOfSpaces = self.calculateOrthogonalMovement(row,column)
-      arrayOfDiagonalSpaces = self.calculateDiagonalMovement(row,column)
+   def whereCanQueenMove(self, x, y):
+      arrayOfSpaces = self.calculateOrthogonalMovement(x,y)
+      arrayOfDiagonalSpaces = self.calculateDiagonalMovement(x,y)
       for diagonalSpace in range(len(arrayOfDiagonalSpaces)):
          arrayOfSpaces.append(arrayOfDiagonalSpaces[diagonalSpace])
 
       return arrayOfSpaces
    
-   def whereCanRookMove(self, row, column):
-      arrayOfSpaces = self.calculateOrthogonalMovement(row, column)
+   def whereCanRookMove(self, x, y):
+      arrayOfSpaces = self.calculateOrthogonalMovement(x, y)
       return arrayOfSpaces
 
-   def whereCanBishopMove(self, row, column):
-      arrayOfSpaces = self.calculateDiagonalMovement(row, column)
+   def whereCanBishopMove(self, x, y):
+      arrayOfSpaces = self.calculateDiagonalMovement(x, y)
       return arrayOfSpaces
 
    ## when there is another piece 
-   def canITakePiece(self,oldRow, oldColumn, newRow, newColumn):
-      myPiece = self.board[oldRow][oldColumn]
-      pieceHere = self.board[newRow][newColumn]
+   def canITakePiece(self,oldX, oldY, newX, newY):
+      myPiece = self.board[oldX][oldY]
+      pieceHere = self.board[newX][newY]
       if pieceHere.getColour() is not myPiece.getColour():
          return True
       else:
          return False
 
-   def isSpaceFree(self, row, column):
-      space = self.board[row][column]
+   def isSpaceFree(self, x, y):
+      space = self.board[x][y]
       if space.getColour() is None:
          return True
       else:
          return False
 
-   def isSpaceOutOfBounds(self, row, column):
-      if row < 0 or row > 7 or column < 0 or column > 7:
+   def isSpaceOutOfBounds(self, x, y):
+      if x < 0 or x > 7 or y < 0 or y > 7:
          return True
       else:
          return False
 
-   def movementPlacementLogic(self, oldRow, oldColumn, newRow, newColumn):
-      if self.isSpaceOutOfBounds(newRow, newColumn):
+   def movementPlacementLogic(self, oldX, oldY, newX, newY):
+      if self.isSpaceOutOfBounds(newX, newY):
          return 'OOB'
-      elif self.isSpaceFree(newRow, newColumn):
+      elif self.isSpaceFree(newX, newY):
          return 'SpaceIsFree'
-      elif self.canITakePiece(oldRow, oldColumn, newRow, newColumn):
+      elif self.canITakePiece(oldX, oldY, newX, newY):
          return 'SpaceHasOpponentPiece'
       else:
          return 'SpaceHasPlayerPiece'
@@ -150,93 +180,93 @@ class Board():
       else:
          return False
 
-   def calculateOrthogonalMovement(self, row, column):
+   def calculateOrthogonalMovement(self, x, y):
       arrayOfSpaces = []
       for x in range(7):
-         rowAbovePiece = row + x + 1
-         answer = self.movementPlacementLogic(row, column, rowAbovePiece, column)
+         xRightOfPiece = x + x + 1
+         answer = self.movementPlacementLogic(x, y, xRightOfPiece, y)
          print(answer)
          if self.canIMoveHere2(answer):
-            arrayOfSpaces.append([rowAbovePiece, column])
+            arrayOfSpaces.append([xRightOfPiece, y])
          if self.canIMoveAnymore(answer):
             break
 
       for x in range(7):
-         rowBelowPiece = row - (x + 1)
-         answer = self.movementPlacementLogic(row, column, rowBelowPiece, column)
+         xLeftOfPiece = x - (x + 1)
+         answer = self.movementPlacementLogic(x, y, xLeftOfPiece, y)
          if self.canIMoveHere2(answer):
-            arrayOfSpaces.append([rowBelowPiece, column])
+            arrayOfSpaces.append([xLeftOfPiece, y])
          if self.canIMoveAnymore(answer):
             break
 
       for y in range(7):
-         columnRightOfPiece = column + y + 1
-         answer = self.movementPlacementLogic(row, column, row, columnRightOfPiece)
+         yAbovePiece = y + y + 1
+         answer = self.movementPlacementLogic(x, y, x, yAbovePiece)
          if self.canIMoveHere2(answer):
-            arrayOfSpaces.append([row, columnRightOfPiece])
+            arrayOfSpaces.append([x, yAbovePiece])
          if self.canIMoveAnymore(answer):
             break
 
       for y in range(7):
-         columnLeftOfPiece = column - (y + 1)
-         answer = self.movementPlacementLogic(row, column, row, columnLeftOfPiece)
+         xBelowPiece = y - (y + 1)
+         answer = self.movementPlacementLogic(x, y, x, xBelowPiece)
          if self.canIMoveHere2(answer):
-            arrayOfSpaces.append([row, columnLeftOfPiece])
+            arrayOfSpaces.append([x, xBelowPiece])
          if self.canIMoveAnymore(answer):
             break
 
       return arrayOfSpaces
    
-   def calculateDiagonalMovement(self, row, column):
+   def calculateDiagonalMovement(self, x, y):
       # +1 to row and column until out of bounds or hit another piece
       # then +1 row and -1 column, -1 row and +1 column, -1 row and column
       arrayOfSpaces = []
 
-      rowFromPiece = row
-      columnFromPiece = column
+      xFromPiece = x
+      yFromPiece = y
       # up right
       for spaces in range(7):
-         rowFromPiece += 1
-         columnFromPiece += 1
-         answer = self.movementPlacementLogic(row, column, rowFromPiece, columnFromPiece)
+         xFromPiece += 1
+         yFromPiece += 1
+         answer = self.movementPlacementLogic(x, y, xFromPiece, yFromPiece)
          if self.canIMoveHere2(answer):
-            arrayOfSpaces.append([rowFromPiece, columnFromPiece])
+            arrayOfSpaces.append([xFromPiece, yFromPiece])
          if self.canIMoveAnymore(answer):
             break
 
-      rowFromPiece = row
-      columnFromPiece = column
+      xFromPiece = x
+      yFromPiece = y
       # up left
       for spaces in range(7):
-         rowFromPiece -= 1
-         columnFromPiece += 1
-         answer = self.movementPlacementLogic(row, column, rowFromPiece, columnFromPiece)
+         xFromPiece -= 1
+         yFromPiece += 1
+         answer = self.movementPlacementLogic(x, y, xFromPiece, yFromPiece)
          if self.canIMoveHere2(answer):
-            arrayOfSpaces.append([rowFromPiece, columnFromPiece])
+            arrayOfSpaces.append([xFromPiece, yFromPiece])
          if self.canIMoveAnymore(answer):
             break
 
       # down right
-      rowFromPiece = row
-      columnFromPiece = column
+      xFromPiece = x
+      yFromPiece = y
       for spaces in range(7):
-         rowFromPiece += 1
-         columnFromPiece -= 1
-         answer = self.movementPlacementLogic(row, column, rowFromPiece, columnFromPiece)
+         xFromPiece += 1
+         yFromPiece -= 1
+         answer = self.movementPlacementLogic(x, y, xFromPiece, yFromPiece)
          if self.canIMoveHere2(answer):
-            arrayOfSpaces.append([rowFromPiece, columnFromPiece])
+            arrayOfSpaces.append([xFromPiece, yFromPiece])
          if self.canIMoveAnymore(answer):
             break
 
       # down left
-      rowFromPiece = row
-      columnFromPiece = column
+      xFromPiece = x
+      yFromPiece = y
       for spaces in range(7):
-         rowFromPiece -= 1
-         columnFromPiece -= 1
-         answer = self.movementPlacementLogic(row, column, rowFromPiece, columnFromPiece)
+         xFromPiece -= 1
+         yFromPiece -= 1
+         answer = self.movementPlacementLogic(x, y, xFromPiece, yFromPiece)
          if self.canIMoveHere2(answer):
-            arrayOfSpaces.append([rowFromPiece, columnFromPiece])
+            arrayOfSpaces.append([xFromPiece, yFromPiece])
          if self.canIMoveAnymore(answer):
             break
 

@@ -14,6 +14,17 @@ COLUMN_EQUIVILENT_NO = {
    'h': 7
 }
 
+def returnActualYValue(pieceInput):
+   return int(pieceInput[1]) - 1
+
+def returnActualXValue(pieceInput):
+   return COLUMN_EQUIVILENT_NO[pieceInput[0].lower()]
+
+def isRowOrColumnInBounds(num):
+   if num < 0 or num > 7:
+      return False
+   return True
+
 def inputLoop(text):
    loop = True
    while (loop):
@@ -24,27 +35,31 @@ def inputLoop(text):
          print("No input, try again.")
          continue
       try:
-         row = returnActualRowValue(pieceInput)
-      except:
-         print("Invalid row, try again.")
-         continue
-
-      try:
-         column = returnActualColumnValue(pieceInput)
+         xValue = returnActualXValue(pieceInput)
       except:
          print("Invalid column, try again.")
          continue
 
-      if myBoard.isThereAPieceHere(row, column):
+      try:
+         yValue = returnActualYValue(pieceInput)
+      except:
+         print("Invalid row, try again.")
+         continue
+
+      if myBoard.isThereAPieceHere(xValue, yValue):
          loop = False
          print("Input valid")
 
-def isRowOrColumnInBounds(num):
-   if num < 0 or num > 7:
-      return False
-   return True
+   print("x: ")
+   print(xValue)
+   print("y: ")
+   print(yValue)
+   xAndYInputs = []
+   xAndYInputs.append(xValue)
+   xAndYInputs.append(yValue)
+   return xAndYInputs
 
-def inputMoveTo(text, row, column):
+def inputMoveTo(text, x, y):
    loop = True
    while (loop):
       print(text,  end=" ")
@@ -53,57 +68,44 @@ def inputMoveTo(text, row, column):
       if pieceInput == "":
          print("No input, try again.")
          continue
+
       try:
-         newRow = returnActualRowValue(pieceInput)
-      except:
-         print("Invalid row, try again.")
-         continue
-      try:
-         newColumn = returnActualColumnValue(pieceInput)
+         newXValue = returnActualXValue(pieceInput)
       except:
          print("Invalid column, try again.")
          continue
 
-      if not isRowOrColumnInBounds(newRow):
+      if not isRowOrColumnInBounds(newXValue):
+         print("Column is out of bounds.")
+         continue
+
+      try:
+         newYValue = returnActualYValue(pieceInput)
+      except:
+         print("Invalid row, try again.")
+         continue
+
+      if not isRowOrColumnInBounds(newYValue):
          print("Row is out of bounds.")
          continue
 
-      if not isRowOrColumnInBounds(newColumn):
-         print("Column is out of bounds.")
-         continue
-      
-      if not myBoard.canIMoveHere(row, column, newRow, newColumn):
+      print(newXValue)
+      print(newYValue)
+
+      ## doesnt check specific piece type and such. Need to replace
+      if not myBoard.canIMoveHere(x, y, newXValue, newYValue):
          print("Can't move here.")
          continue
 
-      myBoard.movePiece(row, column, newRow, newColumn)
+      myBoard.movePiece(x, y, newXValue, newYValue)
       loop = False
-
-      # try:
-      #    newRow = int(pieceInput[1])
-      #    newColumn = pieceInput[0].lower()
-      #    if checkForValidSquare(newRow, newColumn) == True:
-      #       actualNewRow = newRow - 1
-      #       actualNewColumn = COLUMN_EQUIVILENT_NO[newColumn] - 1
-      #       print(1)
-      #       if myBoard.canIMoveHere(actualRow, actualColumn, actualNewRow, actualNewColumn) == True:
-      #          myBoard.movePiece(actualRow, actualColumn, actualNewRow, actualNewColumn)
-      #          loop = False
-      #       else:
-      #          print("Can't move here. ")
-      #    else:
-      #       print("Invalid tile, try again.")
-      # except:
-      #    print("Invalid row")
-def returnActualRowValue(pieceInput):
-   return int(pieceInput[1]) - 1
-
-def returnActualColumnValue(pieceInput):
-   return COLUMN_EQUIVILENT_NO[pieceInput[0].lower()]
 
 myBoard = board.Board()
 myBoard.printBoard()
 
 # fix so inputLoop returns row and column
-inputLoop("White's turn. Pick a square:")
-inputMoveTo("Pick a spot to move your piece. Pick a square:")
+xAndYInputs = inputLoop("White's turn. Pick a square in chess notation (column + row):")
+x = xAndYInputs[0]
+y = xAndYInputs[1]
+inputMoveTo("Pick a square to move your piece:", x, y)
+myBoard.printBoard()
