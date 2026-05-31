@@ -99,7 +99,6 @@ myBoard.printBoard()
 xAndYInputs = inputLoop("White's turn. Pick a square in chess notation (column + row):")
 x = xAndYInputs[0]
 y = xAndYInputs[1]
-print(myBoard.whereCanPawnMoveWithoutTaking(x, y))
-print(myBoard.whereCanPawnMoveWhileTaking(x, y))
+print(myBoard.whereCanKnightMove(x, y))
 inputMoveTo("Pick a square to move your piece:", x, y)
 myBoard.printBoard()

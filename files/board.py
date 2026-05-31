@@ -54,6 +54,8 @@ class Board():
       board[6][7] = square.Square('knight', 'black', 1)
       board[7][7] = square.Square('rook', 'black', 1)
       board[7][7] = square.Square('pawn', 'white', 8)
+
+      board[3][3] = square.Square('knight', 'white', 8)
       self.board = board
 
    def printBoard(self):
@@ -158,7 +160,6 @@ class Board():
             break
       return arrayOfSpaces
 
-## complete here
    def whereCanPawnMoveWhileTaking(self,x,y):
       ## where pawn can only move if it take (x-1,y+1 and x+1,y+1)
       ## either piece is at this location or this location y-1
@@ -188,6 +189,17 @@ class Board():
          arrayOfSpaces.append([newX,newY])
 
       return arrayOfSpaces
+   
+   def whereCanKnightMove(self, x, y):
+      arrayOfPotentialSpaces = [ [x-2, y+1], [x-2, y-1], [x+2, y+1], [x+2, y-1], [x-1, y+2], [x+1, y+2], [x-1, y-2], [x+1, y-2] ]
+      arrayOfSpaces = []
+      for spaces in arrayOfPotentialSpaces:
+         newX = spaces[0]
+         newY = spaces[1]
+         answer = self.movementPlacementLogic(x,y,newX,newY)
+         if self.canIMoveHere2(answer) is True:
+            arrayOfSpaces.append(spaces)
+      return arrayOfSpaces
       
    ## when there is another piece 
    # safer than old version
@@ -201,7 +213,6 @@ class Board():
          return True
       return False
       
-
    def isSpaceFree(self, x, y):
       space = self.board[x][y]
       if space.getColour() is None:
