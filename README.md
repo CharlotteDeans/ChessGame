@@ -1,1 +1,3 @@
 # ChessGame
+
+Currently unfinished
