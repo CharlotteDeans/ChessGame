@@ -96,7 +96,7 @@ class Board():
       return True
    
    ## change or delete because it's part of bad code
-   def canIMoveHere(self, oldXValue, oldYValue, newXValue, newYValue):
+   def canIMoveHereOld(self, oldXValue, oldYValue, newXValue, newYValue):
       myPiece = self.board[oldXValue][oldYValue]
       pieceToOvertake = self.board[newXValue][newYValue]
       if pieceToOvertake.getType() is None:
@@ -154,7 +154,7 @@ class Board():
          else:
             newY = y - (i + 1)
          answer = self.movementPlacementLogic(x,y,x,newY)
-         if self.canIMoveHere2(answer):
+         if self.canIMoveHere(answer):
             arrayOfSpaces.append([x,newY])
          if self.canIMoveAnymore(answer):
             break
@@ -178,14 +178,14 @@ class Board():
 
       # up left
       answer = self.movementPlacementLogic(x,y,newX,newY)
-      if self.canIMoveHere2(answer) and self.canITakePiece(x,y,oppX,oppY):
+      if self.canIMoveHere(answer) and self.canITakePiece(x,y,oppX,oppY):
          arrayOfSpaces.append([newX,newY])
       
       # up right
       newX = x + 1
       oppX = x + 1
       answer = self.movementPlacementLogic(x,y,newX,newY)
-      if self.canIMoveHere2(answer) and self.canITakePiece(x,y,oppX,oppY):
+      if self.canIMoveHere(answer) and self.canITakePiece(x,y,oppX,oppY):
          arrayOfSpaces.append([newX,newY])
 
       return arrayOfSpaces
@@ -197,7 +197,7 @@ class Board():
          newX = spaces[0]
          newY = spaces[1]
          answer = self.movementPlacementLogic(x,y,newX,newY)
-         if self.canIMoveHere2(answer) is True:
+         if self.canIMoveHere(answer) is True:
             arrayOfSpaces.append(spaces)
       return arrayOfSpaces
       
@@ -236,7 +236,7 @@ class Board():
       else:
          return 'SpaceHasPlayerPiece'
       
-   def canIMoveHere2(self, answer):
+   def canIMoveHere(self, answer):
          if (answer == 'SpaceIsFree' or answer == 'SpaceHasOpponentPiece'):
             return True
          else:
@@ -254,7 +254,7 @@ class Board():
          xRightOfPiece = x + x + 1
          answer = self.movementPlacementLogic(x, y, xRightOfPiece, y)
          print(answer)
-         if self.canIMoveHere2(answer):
+         if self.canIMoveHere(answer):
             arrayOfSpaces.append([xRightOfPiece, y])
          if self.canIMoveAnymore(answer):
             break
@@ -262,7 +262,7 @@ class Board():
       for x in range(7):
          xLeftOfPiece = x - (x + 1)
          answer = self.movementPlacementLogic(x, y, xLeftOfPiece, y)
-         if self.canIMoveHere2(answer):
+         if self.canIMoveHere(answer):
             arrayOfSpaces.append([xLeftOfPiece, y])
          if self.canIMoveAnymore(answer):
             break
@@ -270,7 +270,7 @@ class Board():
       for y in range(7):
          yAbovePiece = y + y + 1
          answer = self.movementPlacementLogic(x, y, x, yAbovePiece)
-         if self.canIMoveHere2(answer):
+         if self.canIMoveHere(answer):
             arrayOfSpaces.append([x, yAbovePiece])
          if self.canIMoveAnymore(answer):
             break
@@ -278,7 +278,7 @@ class Board():
       for y in range(7):
          xBelowPiece = y - (y + 1)
          answer = self.movementPlacementLogic(x, y, x, xBelowPiece)
-         if self.canIMoveHere2(answer):
+         if self.canIMoveHere(answer):
             arrayOfSpaces.append([x, xBelowPiece])
          if self.canIMoveAnymore(answer):
             break
@@ -297,7 +297,7 @@ class Board():
          xFromPiece += 1
          yFromPiece += 1
          answer = self.movementPlacementLogic(x, y, xFromPiece, yFromPiece)
-         if self.canIMoveHere2(answer):
+         if self.canIMoveHere(answer):
             arrayOfSpaces.append([xFromPiece, yFromPiece])
          if self.canIMoveAnymore(answer):
             break
@@ -309,7 +309,7 @@ class Board():
          xFromPiece -= 1
          yFromPiece += 1
          answer = self.movementPlacementLogic(x, y, xFromPiece, yFromPiece)
-         if self.canIMoveHere2(answer):
+         if self.canIMoveHere(answer):
             arrayOfSpaces.append([xFromPiece, yFromPiece])
          if self.canIMoveAnymore(answer):
             break
@@ -321,7 +321,7 @@ class Board():
          xFromPiece += 1
          yFromPiece -= 1
          answer = self.movementPlacementLogic(x, y, xFromPiece, yFromPiece)
-         if self.canIMoveHere2(answer):
+         if self.canIMoveHere(answer):
             arrayOfSpaces.append([xFromPiece, yFromPiece])
          if self.canIMoveAnymore(answer):
             break
@@ -333,7 +333,7 @@ class Board():
          xFromPiece -= 1
          yFromPiece -= 1
          answer = self.movementPlacementLogic(x, y, xFromPiece, yFromPiece)
-         if self.canIMoveHere2(answer):
+         if self.canIMoveHere(answer):
             arrayOfSpaces.append([xFromPiece, yFromPiece])
          if self.canIMoveAnymore(answer):
             break

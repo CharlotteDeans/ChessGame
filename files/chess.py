@@ -85,9 +85,9 @@ def inputMoveTo(text, x, y):
          print("Row is out of bounds.")
          continue
       ## doesnt check specific piece type and such. Need to replace
-      if not myBoard.canIMoveHere(x, y, newXValue, newYValue):
-         print("Can't move here.")
-         continue
+      # if not myBoard.canIMoveHere(x, y, newXValue, newYValue):
+      #    print("Can't move here.")
+      #    continue
 
       myBoard.movePiece(x, y, newXValue, newYValue)
       loop = False
@@ -100,5 +100,5 @@ xAndYInputs = inputLoop("White's turn. Pick a square in chess notation (column +
 x = xAndYInputs[0]
 y = xAndYInputs[1]
 print(myBoard.whereCanKnightMove(x, y))
-inputMoveTo("Pick a square to move your piece:", x, y)
-myBoard.printBoard()
+# inputMoveTo("Pick a square to move your piece:", x, y)
+# myBoard.printBoard()
