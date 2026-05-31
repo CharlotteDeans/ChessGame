@@ -50,10 +50,6 @@ def inputLoop(text):
          loop = False
          print("Input valid")
 
-   print("x: ")
-   print(xValue)
-   print("y: ")
-   print(yValue)
    xAndYInputs = []
    xAndYInputs.append(xValue)
    xAndYInputs.append(yValue)
@@ -88,10 +84,6 @@ def inputMoveTo(text, x, y):
       if not isRowOrColumnInBounds(newYValue):
          print("Row is out of bounds.")
          continue
-
-      print(newXValue)
-      print(newYValue)
-
       ## doesnt check specific piece type and such. Need to replace
       if not myBoard.canIMoveHere(x, y, newXValue, newYValue):
          print("Can't move here.")
@@ -107,5 +99,7 @@ myBoard.printBoard()
 xAndYInputs = inputLoop("White's turn. Pick a square in chess notation (column + row):")
 x = xAndYInputs[0]
 y = xAndYInputs[1]
+print(myBoard.whereCanPawnMoveWithoutTaking(x, y))
+print(myBoard.whereCanPawnMoveWhileTaking(x, y))
 inputMoveTo("Pick a square to move your piece:", x, y)
 myBoard.printBoard()

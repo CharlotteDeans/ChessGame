@@ -53,7 +53,7 @@ class Board():
       board[5][7] = square.Square('bishop', 'black', 1)
       board[6][7] = square.Square('knight', 'black', 1)
       board[7][7] = square.Square('rook', 'black', 1)
-      board[3][4] = square.Square('bishop', 'white', 2)
+      board[7][7] = square.Square('pawn', 'white', 8)
       self.board = board
 
    def printBoard(self):
@@ -140,45 +140,67 @@ class Board():
       # if pawn's first move, can move 2 spaces
       arrayOfSpaces = []
       myPiece = self.board[x][y]
-
-      # arrayOfSpaces = []
-      # for x in range(7):
-      #    xRightOfPiece = x + x + 1
-      #    answer = self.movementPlacementLogic(x, y, xRightOfPiece, y)
-      #    print(answer)
-      #    if self.canIMoveHere2(answer):
-      #       arrayOfSpaces.append([xRightOfPiece, y])
-      #    if self.canIMoveAnymore(answer):
-      #       break
-
-      # where pawn does not take (y+1 and y+2)
+      # black moves down, white up
+      pieceColour = myPiece.getColour()
       j = 1
       if not myPiece.hasPieceMoved():
          j += 1
          myPiece.switchPieceMoved()
       for i in range(j):
-         newY = y + j
+         if pieceColour is 'white':
+            newY = y + i + 1
+         else:
+            newY = y - (i + 1)
          answer = self.movementPlacementLogic(x,y,x,newY)
          if self.canIMoveHere2(answer):
             arrayOfSpaces.append([x,newY])
          if self.canIMoveAnymore(answer):
             break
+      return arrayOfSpaces
 
 ## complete here
    def whereCanPawnMoveWhileTaking(self,x,y):
       ## where pawn can only move if it take (x-1,y+1 and x+1,y+1)
       ## either piece is at this location or this location y-1
-      pass
-
-
-   ## when there is another piece 
-   def canITakePiece(self,oldX, oldY, newX, newY):
-      myPiece = self.board[oldX][oldY]
-      pieceHere = self.board[newX][newY]
-      if pieceHere.getColour() is not myPiece.getColour():
-         return True
+      arrayOfSpaces = []
+      myPiece = self.board[x][y]
+      pieceColour = myPiece.getColour()
+      
+      newX = x - 1
+      oppX = x - 1
+      oppY = y
+      
+      if pieceColour is 'white':
+         newY = y + 1
       else:
+         newY = y - 1
+
+      # up left
+      answer = self.movementPlacementLogic(x,y,newX,newY)
+      if self.canIMoveHere2(answer) and self.canITakePiece(x,y,oppX,oppY):
+         arrayOfSpaces.append([newX,newY])
+      
+      # up right
+      newX = x + 1
+      oppX = x + 1
+      answer = self.movementPlacementLogic(x,y,newX,newY)
+      if self.canIMoveHere2(answer) and self.canITakePiece(x,y,oppX,oppY):
+         arrayOfSpaces.append([newX,newY])
+
+      return arrayOfSpaces
+      
+   ## when there is another piece 
+   # safer than old version
+   # assumes old piece is actual piece
+   def canITakePiece(self,oldX, oldY, newX, newY):
+      if not self.isXOrYInBounds(oldX) or not self.isXOrYInBounds(oldY) or not self.isXOrYInBounds(newX) or not self.isXOrYInBounds(newY):
          return False
+      piece = self.board[oldX][oldY]
+      oppPiece = self.board[newX][newY]
+      if piece.getColour() is not oppPiece.getColour() and oppPiece.getType() is not None:
+         return True
+      return False
+      
 
    def isSpaceFree(self, x, y):
       space = self.board[x][y]
