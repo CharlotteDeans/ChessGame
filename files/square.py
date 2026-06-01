@@ -1,14 +1,9 @@
 class Square():
-   def __init__(self, type=None, colour=None, no=None):
+   def __init__(self, type=None, colour=None):
       self.type = type
       self.colour = colour
-      self.no = no
       self.symbol = '▢'
       self.pieceMoved = False
-
-      if self.type == "test":
-         self.symbol = 'T'
-         pass
 
       # movement logic - each piece needs different logic made in board to determine where they can move
       # king can move anywhere one space around it
@@ -48,6 +43,9 @@ class Square():
                self.symbol = '♞'
             case "pawn":
                self.symbol = '♟'
+
+      if self.type is 'pawn':
+         self.enPassantable = False
       pass
    
    def getType(self):
@@ -67,3 +65,9 @@ class Square():
 
    def hasPieceMoved(self):
       return self.pieceMoved
+   
+   def switchEnPassantOn(self):
+      self.enPassantable = True
+
+   def switchEnPassantOff(self):
+      self.enPassantable = False

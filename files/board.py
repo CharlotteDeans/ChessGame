@@ -3,59 +3,32 @@ import square
 class Board():
    def __init__(self):
       board = [[square.Square() for x in range(8)] for y in range(8)]
-
-      # row(num)/column(char)
-      # row is y axis and column is x axis
-
-      # # filling out board
-      # board[0][0] = square.Square('rook', 'white', 1)
-      # board[0][1] = square.Square('knight', 'white', 1)
-      # board[0][2] = square.Square('bishop', 'white', 1)
-      # board[0][3] = square.Square('queen', 'white', 0)
-      # board[0][4] = square.Square('king', 'white', 0)
-      # board[0][5] = square.Square('bishop', 'white', 0)
-      # board[0][6] = square.Square('knight', 'white', 0)
-      # board[0][7] = square.Square('rook', 'white', 0)
-      # for y in range(8):
-      #    board[1][y] = square.Square('pawn', 'white', 7 - y) ## counting backwards
-      # for y in range(8):
-      #    board[6][y] = square.Square('pawn', 'black', y)
-      # board[7][0] = square.Square('rook', 'black', 0)
-      # board[7][1] = square.Square('knight', 'black', 0)
-      # board[7][2] = square.Square('bishop', 'black', 0)
-      # board[7][3] = square.Square('queen', 'black', 0)
-      # board[7][4] = square.Square('king', 'black', 0)
-      # board[7][5] = square.Square('bishop', 'black', 1)
-      # board[7][6] = square.Square('knight', 'black', 1)
-      # board[7][7] = square.Square('rook', 'black', 1)
-      # board[3][4] = square.Square('bishop', 'white', 2)
-
       # filling out board
       # first is char, second is num
       # x/y - column/row - char/num
-      board[0][0] = square.Square('rook', 'white', 1)
-      board[1][0] = square.Square('knight', 'white', 1)
-      board[2][0] = square.Square('bishop', 'white', 1)
-      board[3][0] = square.Square('queen', 'white', 0)
-      board[4][0] = square.Square('king', 'white', 0)
-      board[5][0] = square.Square('bishop', 'white', 0)
-      board[6][0] = square.Square('knight', 'white', 0)
-      board[7][0] = square.Square('rook', 'white', 0)
+      board[0][0] = square.Square('rook', 'white')
+      board[1][0] = square.Square('knight', 'white')
+      board[2][0] = square.Square('bishop', 'white')
+      board[3][0] = square.Square('queen', 'white')
+      board[4][0] = square.Square('king', 'white')
+      board[5][0] = square.Square('bishop', 'white')
+      board[6][0] = square.Square('knight', 'white')
+      board[7][0] = square.Square('rook', 'white')
       for x in range(8):
-         board[x][1] = square.Square('pawn', 'white', 7 - x) ## counting backwards
+         board[x][1] = square.Square('pawn', 'white') ## counting backwards
       for x in range(8):
-         board[x][6] = square.Square('pawn', 'black', x)
-      board[0][7] = square.Square('rook', 'black', 0)
-      board[1][7] = square.Square('knight', 'black', 0)
-      board[2][7] = square.Square('bishop', 'black', 0)
-      board[3][7] = square.Square('queen', 'black', 0)
-      board[4][7] = square.Square('king', 'black', 0)
-      board[5][7] = square.Square('bishop', 'black', 1)
-      board[6][7] = square.Square('knight', 'black', 1)
-      board[7][7] = square.Square('rook', 'black', 1)
-      board[7][7] = square.Square('pawn', 'white', 8)
+         board[x][6] = square.Square('pawn', 'black')
+      board[0][7] = square.Square('rook', 'black')
+      board[1][7] = square.Square('knight', 'black')
+      board[2][7] = square.Square('bishop', 'black')
+      board[3][7] = square.Square('queen', 'black')
+      board[4][7] = square.Square('king', 'black')
+      board[5][7] = square.Square('bishop', 'black')
+      board[6][7] = square.Square('knight', 'black')
+      board[7][7] = square.Square('rook', 'black')
 
-      board[3][3] = square.Square('knight', 'white', 8)
+      board[4][4] = square.Square('pawn', 'black')
+      board[3][3] = square.Square('pawn', 'white')
       self.board = board
 
    def printBoard(self):
@@ -82,6 +55,10 @@ class Board():
       print(thePiece.getType())
       print(thePiece.getColour())
 
+   def returnPieceType(self,x,y):
+      thePiece = self.board[x][y]
+      return thePiece.getType()
+
    def isXOrYInBounds(self, num):
       if num < 0 or num > 7:
          return False
@@ -95,17 +72,22 @@ class Board():
          return False
       return True
    
-   ## change or delete because it's part of bad code
-   def canIMoveHereOld(self, oldXValue, oldYValue, newXValue, newYValue):
-      myPiece = self.board[oldXValue][oldYValue]
-      pieceToOvertake = self.board[newXValue][newYValue]
-      if pieceToOvertake.getType() is None:
-         return True
-      elif pieceToOvertake.getColour() is not myPiece.getColour():
-         return True
-      return False
-   
    def movePiece(self, oldX, oldY, newX, newY):
+
+      myPiece = self.board[oldX][oldY]
+      ## when this colour moves, all pawns of this colour and un-enpassantable, apart from a piece that's just made itself susceptible (which is made enpassantable after this block)
+      for x in range(8):
+         for y in range(8):
+            thisPiece = self.board[x][y]
+            if thisPiece.getType() is 'pawn' and thisPiece.getColour is myPiece.getColour():
+               thisPiece.switchEnPassantOff()
+
+      ## check for enpassant
+      # if my piece is pawn and oldY+2 = newY
+      if myPiece.getType() is 'pawn' and oldY+2 is newY:
+         myPiece.switchEnPassantOn()
+
+      # then move
       self.board[newX][newY] = self.board[oldX][oldY]
       self.board[oldX][oldY] = square.Square()
 
@@ -137,13 +119,14 @@ class Board():
    def whereCanBishopMove(self, x, y):
       arrayOfSpaces = self.calculateDiagonalMovement(x, y)
       return arrayOfSpaces
-   
-   def whereCanPawnMoveWithoutTaking(self, x, y):
+
+   def whereCanPawnMove(self, x, y):
       # if pawn's first move, can move 2 spaces
       arrayOfSpaces = []
       myPiece = self.board[x][y]
-      # black moves down, white up
       pieceColour = myPiece.getColour()
+
+      # without taking
       j = 1
       if not myPiece.hasPieceMoved():
          j += 1
@@ -158,11 +141,31 @@ class Board():
             arrayOfSpaces.append([x,newY])
          if self.canIMoveAnymore(answer):
             break
-      return arrayOfSpaces
+      
+      # while taking
+      newX = x - 1
+      if pieceColour is 'white':
+         newY = y + 1
+      else:
+         newY = y - 1
 
-   def whereCanPawnMoveWhileTaking(self,x,y):
+      # up left
+      answer = self.movementPlacementLogic(x,y,newX,newY)
+      if self.canIMoveHere(answer):
+         arrayOfSpaces.append([newX,newY])
+      
+      # up right
+      newX = x + 1
+
+      answer = self.movementPlacementLogic(x,y,newX,newY)
+      if self.canIMoveHere(answer):
+         arrayOfSpaces.append([newX,newY])
+
+      return arrayOfSpaces
+   
+   def canPawnEnPassant(self,x,y):
       ## where pawn can only move if it take (x-1,y+1 and x+1,y+1)
-      ## either piece is at this location or this location y-1
+      ## and opposing pawn travelled two spaces on the previous turn
       arrayOfSpaces = []
       myPiece = self.board[x][y]
       pieceColour = myPiece.getColour()
@@ -189,7 +192,8 @@ class Board():
          arrayOfSpaces.append([newX,newY])
 
       return arrayOfSpaces
-   
+
+
    def whereCanKnightMove(self, x, y):
       arrayOfPotentialSpaces = [ [x-2, y+1], [x-2, y-1], [x+2, y+1], [x+2, y-1], [x-1, y+2], [x+1, y+2], [x-1, y-2], [x+1, y-2] ]
       arrayOfSpaces = []
@@ -200,9 +204,6 @@ class Board():
          if self.canIMoveHere(answer) is True:
             arrayOfSpaces.append(spaces)
       return arrayOfSpaces
-      
-   ## when there is another piece 
-   # safer than old version
    # assumes old piece is actual piece
    def canITakePiece(self,oldX, oldY, newX, newY):
       if not self.isXOrYInBounds(oldX) or not self.isXOrYInBounds(oldY) or not self.isXOrYInBounds(newX) or not self.isXOrYInBounds(newY):

@@ -84,13 +84,35 @@ def inputMoveTo(text, x, y):
       if not isRowOrColumnInBounds(newYValue):
          print("Row is out of bounds.")
          continue
-      ## doesnt check specific piece type and such. Need to replace
-      # if not myBoard.canIMoveHere(x, y, newXValue, newYValue):
-      #    print("Can't move here.")
-      #    continue
+      # check piece type and return equivilent available spaces
+      # compare available spaces with input space
+      print(newXValue)
+      print(newYValue)
+      pieceType = myBoard.returnPieceType(x, y)
+      print(pieceType)
+      match pieceType:
+         case 'pawn':
+            arrayOfSpaces = myBoard.whereCanPawnMove(x,y)
+         case 'knight':
+            arrayOfSpaces = myBoard.whereCanKnightMove(x,y)
+         case 'bishop':
+            arrayOfSpaces = myBoard.whereCanBishopMove(x,y)
+         case 'rook':
+            arrayOfSpaces = myBoard.whereCanRookMove(x,y)
+         case 'queen':
+            arrayOfSpaces = myBoard.whereCanQueenMove(x,y)
+         case 'king':
+            arrayOfSpaces = myBoard.whereCanKingMove(x,y)
+      newSpace = [newXValue,newYValue]
+      print(newSpace)
+      print(arrayOfSpaces)
+      if newSpace in arrayOfSpaces:
+         myBoard.movePiece(x, y, newXValue, newYValue)
+         loop = False
+      else:
+         print("Can't move here.")
+         continue
 
-      myBoard.movePiece(x, y, newXValue, newYValue)
-      loop = False
 
 myBoard = board.Board()
 myBoard.printBoard()
@@ -99,6 +121,5 @@ myBoard.printBoard()
 xAndYInputs = inputLoop("White's turn. Pick a square in chess notation (column + row):")
 x = xAndYInputs[0]
 y = xAndYInputs[1]
-print(myBoard.whereCanKnightMove(x, y))
-# inputMoveTo("Pick a square to move your piece:", x, y)
-# myBoard.printBoard()
+inputMoveTo("Pick a square to move your piece:", x, y)
+myBoard.printBoard()
