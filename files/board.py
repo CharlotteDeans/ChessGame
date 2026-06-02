@@ -26,9 +26,6 @@ class Board():
       board[5][7] = square.Square('bishop', 'black')
       board[6][7] = square.Square('knight', 'black')
       board[7][7] = square.Square('rook', 'black')
-
-      board[4][3] = square.Square('pawn', 'black')
-      board[3][3] = square.Square('pawn', 'white')
       self.board = board
 
    def printBoard(self):
@@ -83,7 +80,7 @@ class Board():
       for x in range(8):
          for y in range(8):
             thisPiece = self.board[x][y]
-            if thisPiece.getType() is 'pawn' and thisPiece.getColour is myPiece.getColour():
+            if thisPiece.getType() is 'pawn' and thisPiece.getColour() is myPiece.getColour():
                thisPiece.switchEnPassantOff()
 
       ## check for enpassant
@@ -269,7 +266,6 @@ class Board():
       for x in range(7):
          xRightOfPiece = x + x + 1
          answer = self.movementPlacementLogic(x, y, xRightOfPiece, y)
-         print(answer)
          if self.canIMoveHere(answer):
             arrayOfSpaces.append([xRightOfPiece, y])
          if self.canIMoveAnymore(answer):

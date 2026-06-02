@@ -25,7 +25,7 @@ def isRowOrColumnInBounds(num):
       return False
    return True
 
-def inputLoop(text):
+def inputLoop(text, colour):
    loop = True
    while (loop):
       print(text,  end=" ")
@@ -44,6 +44,10 @@ def inputLoop(text):
          yValue = returnActualYValue(pieceInput)
       except:
          print("Invalid row, try again.")
+         continue
+
+      if myBoard.returnPieceColour(xValue, yValue) is not colour:
+         print("Wrong colour, pick a colour of your side.")
          continue
 
       if myBoard.isThereAPieceHere(xValue, yValue):
@@ -124,12 +128,23 @@ def killOppWithEnPassant(x,y,newAllyXSpace,newAllyYSpace):
    myBoard.killPiece(oppX,oppY)
    pass
 
+def gameLoop():
+   currentColour = 'white'
+   while True:
+      if currentColour is 'white':
+         xAndYInputs = inputLoop("White's turn. Pick a square in chess notation (column + row):", currentColour)
+      else:
+         xAndYInputs = inputLoop("Black's turn. Pick a square in chess notation (column + row):", currentColour)
+      x = xAndYInputs[0]
+      y = xAndYInputs[1]
+      inputMoveTo("Pick a square to move your piece:", x, y)
+      myBoard.printBoard()
+      if currentColour is 'white':
+         currentColour = 'black'
+      else:
+         currentColour = 'white'
+
 myBoard = board.Board()
 myBoard.printBoard()
+gameLoop()
 
-# fix so inputLoop returns row and column
-xAndYInputs = inputLoop("White's turn. Pick a square in chess notation (column + row):")
-x = xAndYInputs[0]
-y = xAndYInputs[1]
-inputMoveTo("Pick a square to move your piece:", x, y)
-myBoard.printBoard()
