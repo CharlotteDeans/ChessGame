@@ -27,7 +27,7 @@ class Board():
       board[6][7] = square.Square('knight', 'black')
       board[7][7] = square.Square('rook', 'black')
 
-      board[4][4] = square.Square('pawn', 'black')
+      board[4][3] = square.Square('pawn', 'black')
       board[3][3] = square.Square('pawn', 'white')
       self.board = board
 
@@ -59,6 +59,10 @@ class Board():
       thePiece = self.board[x][y]
       return thePiece.getType()
 
+   def returnPieceColour(self,x,y):
+      thePiece = self.board[x][y]
+      return thePiece.getColour()
+   
    def isXOrYInBounds(self, num):
       if num < 0 or num > 7:
          return False
@@ -90,6 +94,9 @@ class Board():
       # then move
       self.board[newX][newY] = self.board[oldX][oldY]
       self.board[oldX][oldY] = square.Square()
+
+   def killPiece(self, x, y):
+      self.board[x][y] = square.Square()
 
    def whereCanKingMove(self, x, y):
       myPiece = self.board[x][y]
@@ -151,29 +158,30 @@ class Board():
 
       # up left
       answer = self.movementPlacementLogic(x,y,newX,newY)
-      if self.canIMoveHere(answer):
+      if self.canIMoveHere(answer) and self.canITakePiece(x,y,newX,newY):
          arrayOfSpaces.append([newX,newY])
       
       # up right
       newX = x + 1
 
       answer = self.movementPlacementLogic(x,y,newX,newY)
-      if self.canIMoveHere(answer):
+      if self.canIMoveHere(answer) and self.canITakePiece(x,y,newX,newY):
          arrayOfSpaces.append([newX,newY])
 
       return arrayOfSpaces
    
-   def canPawnEnPassant(self,x,y):
+   def whereCanPawnEnPassant(self,x,y):
       ## where pawn can only move if it take (x-1,y+1 and x+1,y+1)
       ## and opposing pawn travelled two spaces on the previous turn
       arrayOfSpaces = []
       myPiece = self.board[x][y]
       pieceColour = myPiece.getColour()
-      
       newX = x - 1
       oppX = x - 1
       oppY = y
       
+      oppPiece = self.board[oppX][oppY]
+
       if pieceColour is 'white':
          newY = y + 1
       else:
@@ -181,18 +189,25 @@ class Board():
 
       # up left
       answer = self.movementPlacementLogic(x,y,newX,newY)
-      if self.canIMoveHere(answer) and self.canITakePiece(x,y,oppX,oppY):
+
+      # print(self.canIMoveHere(answer))
+      # print(self.canITakePiece(x,y,oppX,oppY))
+      # print(oppPiece.getEnPassantable())
+      if self.canIMoveHere(answer) and self.canITakePiece(x,y,oppX,oppY) and oppPiece.getEnPassantable():
          arrayOfSpaces.append([newX,newY])
       
       # up right
       newX = x + 1
       oppX = x + 1
+
+      oppPiece = self.board[oppX][oppY]
+
       answer = self.movementPlacementLogic(x,y,newX,newY)
-      if self.canIMoveHere(answer) and self.canITakePiece(x,y,oppX,oppY):
+      if self.canIMoveHere(answer) and self.canITakePiece(x,y,oppX,oppY) and oppPiece.getEnPassantable():
          arrayOfSpaces.append([newX,newY])
-
+      
+      print(arrayOfSpaces)
       return arrayOfSpaces
-
 
    def whereCanKnightMove(self, x, y):
       arrayOfPotentialSpaces = [ [x-2, y+1], [x-2, y-1], [x+2, y+1], [x+2, y-1], [x-1, y+2], [x+1, y+2], [x-1, y-2], [x+1, y-2] ]
@@ -206,7 +221,7 @@ class Board():
       return arrayOfSpaces
    # assumes old piece is actual piece
    def canITakePiece(self,oldX, oldY, newX, newY):
-      if not self.isXOrYInBounds(oldX) or not self.isXOrYInBounds(oldY) or not self.isXOrYInBounds(newX) or not self.isXOrYInBounds(newY):
+      if self.isSpaceOutOfBounds(oldX, oldY) or self.isSpaceOutOfBounds(newX,newY):
          return False
       piece = self.board[oldX][oldY]
       oppPiece = self.board[newX][newY]

@@ -86,13 +86,11 @@ def inputMoveTo(text, x, y):
          continue
       # check piece type and return equivilent available spaces
       # compare available spaces with input space
-      print(newXValue)
-      print(newYValue)
       pieceType = myBoard.returnPieceType(x, y)
-      print(pieceType)
       match pieceType:
          case 'pawn':
             arrayOfSpaces = myBoard.whereCanPawnMove(x,y)
+            arrayOfSpacesEnPassant = myBoard.whereCanPawnEnPassant(x,y)
          case 'knight':
             arrayOfSpaces = myBoard.whereCanKnightMove(x,y)
          case 'bishop':
@@ -104,15 +102,27 @@ def inputMoveTo(text, x, y):
          case 'king':
             arrayOfSpaces = myBoard.whereCanKingMove(x,y)
       newSpace = [newXValue,newYValue]
-      print(newSpace)
-      print(arrayOfSpaces)
       if newSpace in arrayOfSpaces:
          myBoard.movePiece(x, y, newXValue, newYValue)
+         loop = False
+      elif newSpace in arrayOfSpacesEnPassant:
+         killOppWithEnPassant(x,y,newXValue, newYValue)
+         myBoard.movePiece(x,y,newXValue,newYValue)
          loop = False
       else:
          print("Can't move here.")
          continue
 
+def killOppWithEnPassant(x,y,newAllyXSpace,newAllyYSpace):
+   pieceColour = myBoard.returnPieceColour(x, y)
+   oppY = newAllyYSpace
+   if pieceColour == 'white':
+      oppY -= 1
+   else:
+      oppY += 1
+   oppX = newAllyXSpace
+   myBoard.killPiece(oppX,oppY)
+   pass
 
 myBoard = board.Board()
 myBoard.printBoard()

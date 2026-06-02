@@ -4,7 +4,8 @@ class Square():
       self.colour = colour
       self.symbol = '▢'
       self.pieceMoved = False
-
+      self.enPassantable = False
+      
       # movement logic - each piece needs different logic made in board to determine where they can move
       # king can move anywhere one space around it
       # queen can move anywhere so long as either x or y (but not both) doesnt change or the different between x and y is the same and a piece isnt in the way
@@ -44,8 +45,8 @@ class Square():
             case "pawn":
                self.symbol = '♟'
 
-      if self.type is 'pawn':
-         self.enPassantable = False
+      # if self.type is 'pawn':
+      #    self.enPassantable = False
       pass
    
    def getType(self):
@@ -59,6 +60,9 @@ class Square():
 
    def getSymbol(self):
       return self.symbol
+   
+   def getEnPassantable(self):
+      return self.enPassantable
    
    def switchPieceMoved(self):
       self.pieceMoved = True
