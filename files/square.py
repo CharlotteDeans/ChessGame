@@ -44,9 +44,6 @@ class Square():
                self.symbol = '♞'
             case "pawn":
                self.symbol = '♟'
-
-      # if self.type is 'pawn':
-      #    self.enPassantable = False
       pass
    
    def getType(self):
