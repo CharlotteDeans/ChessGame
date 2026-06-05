@@ -83,11 +83,13 @@ class Board():
             if thisPiece.getType() is 'pawn' and thisPiece.getColour() is myPiece.getColour():
                thisPiece.switchEnPassantOff()
 
-      ## check for enpassant
+      ## check for enpassant and turn on piece moved if
       # if my piece is pawn and oldY+2 = newY
-      if myPiece.getType() is 'pawn' and oldY+2 is newY:
+      if myPiece.getType() is 'pawn' and oldY+2 is newY or oldY-2 is newY:
          myPiece.switchEnPassantOn()
-
+         myPiece.switchPieceMoved()
+      if myPiece.getType() is 'pawn' and oldY+1 is newY or oldY-1 is newY:
+         myPiece.switchPieceMoved()
       # then move
       self.board[newX][newY] = self.board[oldX][oldY]
       self.board[oldX][oldY] = square.Square()
@@ -134,7 +136,6 @@ class Board():
       j = 1
       if not myPiece.hasPieceMoved():
          j += 1
-         myPiece.switchPieceMoved()
       for i in range(j):
          if pieceColour is 'white':
             newY = y + i + 1
@@ -203,7 +204,6 @@ class Board():
       if self.canIMoveHere(answer) and self.canITakePiece(x,y,oppX,oppY) and oppPiece.getEnPassantable():
          arrayOfSpaces.append([newX,newY])
       
-      print(arrayOfSpaces)
       return arrayOfSpaces
 
    def whereCanKnightMove(self, x, y):

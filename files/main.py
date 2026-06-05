@@ -91,6 +91,7 @@ def inputMoveTo(text, x, y):
       # check piece type and return equivilent available spaces
       # compare available spaces with input space
       pieceType = myBoard.returnPieceType(x, y)
+      arrayOfSpacesEnPassant = []
       match pieceType:
          case 'pawn':
             arrayOfSpaces = myBoard.whereCanPawnMove(x,y)
@@ -105,6 +106,7 @@ def inputMoveTo(text, x, y):
             arrayOfSpaces = myBoard.whereCanQueenMove(x,y)
          case 'king':
             arrayOfSpaces = myBoard.whereCanKingMove(x,y)
+
       newSpace = [newXValue,newYValue]
       if newSpace in arrayOfSpaces:
          myBoard.movePiece(x, y, newXValue, newYValue)
