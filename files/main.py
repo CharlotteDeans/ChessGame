@@ -25,6 +25,40 @@ def isRowOrColumnInBounds(num):
       return False
    return True
 
+def returnListOfAvailableSpaces(x, y):
+   pieceType = myBoard.returnPieceType(x, y)
+   match pieceType:
+      case 'pawn':
+         arrayOfSpaces = myBoard.whereCanPawnMove(x,y) ## fix so pawn doesnt overtake pawn in front of it
+      case 'knight':
+         arrayOfSpaces = myBoard.whereCanKnightMove(x,y)
+      case 'bishop':
+         arrayOfSpaces = myBoard.whereCanBishopMove(x,y)
+      case 'rook':
+         arrayOfSpaces = myBoard.whereCanRookMove(x,y)
+      case 'queen':
+         arrayOfSpaces = myBoard.whereCanQueenMove(x,y)
+      case 'king':
+         arrayOfSpaces = myBoard.whereCanKingMove(x,y)
+   return arrayOfSpaces
+
+def returnEnPassantAvailableSpaces(x, y):
+   arrayOfSpacesEnPassant = myBoard.whereCanPawnEnPassant(x,y)
+   return arrayOfSpacesEnPassant
+
+def canPieceMove(x, y):
+   arrayOfSpaces = returnListOfAvailableSpaces(x,y)
+   arrayOfSpacesEnPassant = []
+   pieceType = myBoard.returnPieceType(x, y)
+
+   print(arrayOfSpaces)
+
+   if pieceType is 'pawn':
+      arrayOfSpacesEnPassant = returnEnPassantAvailableSpaces(x, y)
+   if not arrayOfSpaces and not arrayOfSpacesEnPassant:
+      return False
+   return True
+
 def inputLoop(text, colour):
    loop = True
    while (loop):
@@ -49,16 +83,22 @@ def inputLoop(text, colour):
       if myBoard.returnPieceColour(xValue, yValue) is not colour:
          print("Wrong colour, pick a colour of your side.")
          continue
+      
+      if not myBoard.isThereAPieceHere(xValue, yValue):
+         print ("No piece here.")
+         continue
 
-      if myBoard.isThereAPieceHere(xValue, yValue):
-         loop = False
-         print("Input valid")
+      if not canPieceMove(xValue, yValue):
+         print("Piece cannot move. Try another piece.")
+         continue
+
+      loop = False
 
    xAndYInputs = []
    xAndYInputs.append(xValue)
    xAndYInputs.append(yValue)
    return xAndYInputs
-
+## fix screwed up movement
 def inputMoveTo(text, x, y):
    loop = True
    while (loop):
@@ -90,23 +130,14 @@ def inputMoveTo(text, x, y):
          continue
       # check piece type and return equivilent available spaces
       # compare available spaces with input space
+      
+      arrayOfSpaces = returnListOfAvailableSpaces(x,y)
       pieceType = myBoard.returnPieceType(x, y)
       arrayOfSpacesEnPassant = []
-      match pieceType:
-         case 'pawn':
-            arrayOfSpaces = myBoard.whereCanPawnMove(x,y)
-            arrayOfSpacesEnPassant = myBoard.whereCanPawnEnPassant(x,y)
-         case 'knight':
-            arrayOfSpaces = myBoard.whereCanKnightMove(x,y)
-         case 'bishop':
-            arrayOfSpaces = myBoard.whereCanBishopMove(x,y)
-         case 'rook':
-            arrayOfSpaces = myBoard.whereCanRookMove(x,y)
-         case 'queen':
-            arrayOfSpaces = myBoard.whereCanQueenMove(x,y)
-         case 'king':
-            arrayOfSpaces = myBoard.whereCanKingMove(x,y)
-
+      if pieceType is 'pawn':
+         arrayOfSpacesEnPassant = returnEnPassantAvailableSpaces(x, y)
+      
+      print(arrayOfSpaces)
       newSpace = [newXValue,newYValue]
       if newSpace in arrayOfSpaces:
          myBoard.movePiece(x, y, newXValue, newYValue)
@@ -145,6 +176,8 @@ def gameLoop():
          currentColour = 'black'
       else:
          currentColour = 'white'
+      if myBoard.checkForCheck(currentColour):
+         print("Check!")
 
 myBoard = board.Board()
 myBoard.printBoard()

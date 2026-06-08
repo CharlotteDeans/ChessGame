@@ -15,7 +15,7 @@ class Board():
       board[6][0] = square.Square('knight', 'white')
       board[7][0] = square.Square('rook', 'white')
       for x in range(8):
-         board[x][1] = square.Square('pawn', 'white') ## counting backwards
+         board[x][1] = square.Square('pawn', 'white')
       for x in range(8):
          board[x][6] = square.Square('pawn', 'black')
       board[0][7] = square.Square('rook', 'black')
@@ -47,6 +47,14 @@ class Board():
       else:
          return thePiece
    
+   def findPieceLocation(self, type, colour):
+      for y in range(8):
+         for x in range(8):
+            currentPiece = self.board[x][y]
+            if currentPiece.getColour() is colour and currentPiece.getType() is type:
+               return [x,y]
+      return None
+
    def printPieceDetails(self,x,y):
       thePiece = self.board[x][y]
       print(thePiece.getType())
@@ -96,7 +104,7 @@ class Board():
 
    def killPiece(self, x, y):
       self.board[x][y] = square.Square()
-
+   ## change so king can't go near other king
    def whereCanKingMove(self, x, y):
       myPiece = self.board[x][y]
       arrayOfSpaces = []
@@ -263,38 +271,37 @@ class Board():
 
    def calculateOrthogonalMovement(self, x, y):
       arrayOfSpaces = []
-      for x in range(7):
-         xRightOfPiece = x + x + 1
+      for i in range(7):
+         xRightOfPiece = x + (i + 1)
          answer = self.movementPlacementLogic(x, y, xRightOfPiece, y)
          if self.canIMoveHere(answer):
             arrayOfSpaces.append([xRightOfPiece, y])
          if self.canIMoveAnymore(answer):
             break
 
-      for x in range(7):
-         xLeftOfPiece = x - (x + 1)
+      for i in range(7):
+         xLeftOfPiece = x - (i + 1)
          answer = self.movementPlacementLogic(x, y, xLeftOfPiece, y)
          if self.canIMoveHere(answer):
             arrayOfSpaces.append([xLeftOfPiece, y])
          if self.canIMoveAnymore(answer):
             break
 
-      for y in range(7):
-         yAbovePiece = y + y + 1
+      for i in range(7):
+         yAbovePiece = y + (i + 1)
          answer = self.movementPlacementLogic(x, y, x, yAbovePiece)
          if self.canIMoveHere(answer):
             arrayOfSpaces.append([x, yAbovePiece])
          if self.canIMoveAnymore(answer):
             break
 
-      for y in range(7):
-         xBelowPiece = y - (y + 1)
+      for i in range(7):
+         xBelowPiece = y - (i + 1)
          answer = self.movementPlacementLogic(x, y, x, xBelowPiece)
          if self.canIMoveHere(answer):
             arrayOfSpaces.append([x, xBelowPiece])
          if self.canIMoveAnymore(answer):
             break
-
       return arrayOfSpaces
    
    def calculateDiagonalMovement(self, x, y):
@@ -351,3 +358,28 @@ class Board():
             break
 
       return arrayOfSpaces
+   
+   def checkForCheck(self, colour):
+      kingSpace = self.findPieceLocation('king', colour)
+      kingX = kingSpace[0]
+      kingY = kingSpace[1]
+
+      ## calculate where each piece can move on the board and if it overlaps with king, return true
+      arrayOfSpaces = []
+      for y in range(8):
+         for x in range(8):
+            pieceType = self.returnPieceType(x, y)
+            match pieceType:
+               case 'pawn':
+                  arrayOfSpaces = self.whereCanPawnMove(x,y)
+               case 'knight':
+                  arrayOfSpaces = self.whereCanKnightMove(x,y)
+               case 'bishop':
+                  arrayOfSpaces = self.whereCanBishopMove(x,y)
+               case 'rook':
+                  arrayOfSpaces = self.whereCanRookMove(x,y)
+               case 'queen':
+                  arrayOfSpaces = self.whereCanQueenMove(x,y)
+            if kingSpace in arrayOfSpaces:
+               return True
+      return False
