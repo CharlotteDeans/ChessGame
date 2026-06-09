@@ -150,7 +150,7 @@ class Board():
          else:
             newY = y - (i + 1)
          answer = self.movementPlacementLogic(x,y,x,newY)
-         if self.canIMoveHere(answer):
+         if self.canIMoveHereAsPawn(answer):
             arrayOfSpaces.append([x,newY])
          if self.canIMoveAnymore(answer):
             break
@@ -262,6 +262,12 @@ class Board():
             return True
          else:
             return False
+
+   def canIMoveHereAsPawn(self, answer):
+      if (answer == 'SpaceIsFree'):
+         return True
+      else:
+         return False
          
    def canIMoveAnymore(self, answer):
       if (answer == 'OOB' or answer == 'SpaceHasOpponentPiece' or answer == 'SpaceHasPlayerPiece'):
