@@ -25,40 +25,6 @@ def isRowOrColumnInBounds(num):
       return False
    return True
 
-def returnListOfAvailableSpaces(x, y):
-   pieceType = myBoard.returnPieceType(x, y)
-   match pieceType:
-      case 'pawn':
-         arrayOfSpaces = myBoard.whereCanPawnMove(x,y) ## fix so pawn doesnt overtake pawn in front of it
-      case 'knight':
-         arrayOfSpaces = myBoard.whereCanKnightMove(x,y)
-      case 'bishop':
-         arrayOfSpaces = myBoard.whereCanBishopMove(x,y)
-      case 'rook':
-         arrayOfSpaces = myBoard.whereCanRookMove(x,y)
-      case 'queen':
-         arrayOfSpaces = myBoard.whereCanQueenMove(x,y)
-      case 'king':
-         arrayOfSpaces = myBoard.whereCanKingMove(x,y)
-   return arrayOfSpaces
-
-def returnEnPassantAvailableSpaces(x, y):
-   arrayOfSpacesEnPassant = myBoard.whereCanPawnEnPassant(x,y)
-   return arrayOfSpacesEnPassant
-
-def canPieceMove(x, y):
-   arrayOfSpaces = returnListOfAvailableSpaces(x,y)
-   arrayOfSpacesEnPassant = []
-   pieceType = myBoard.returnPieceType(x, y)
-
-   print(arrayOfSpaces)
-
-   if pieceType is 'pawn':
-      arrayOfSpacesEnPassant = returnEnPassantAvailableSpaces(x, y)
-   if not arrayOfSpaces and not arrayOfSpacesEnPassant:
-      return False
-   return True
-
 def inputLoop(text, colour):
    loop = True
    while (loop):
@@ -88,7 +54,7 @@ def inputLoop(text, colour):
          print ("No piece here.")
          continue
 
-      if not canPieceMove(xValue, yValue):
+      if not myBoard.canPieceMove(xValue, yValue):
          print("Piece cannot move. Try another piece.")
          continue
 
@@ -98,7 +64,7 @@ def inputLoop(text, colour):
    xAndYInputs.append(xValue)
    xAndYInputs.append(yValue)
    return xAndYInputs
-## fix screwed up movement
+
 def inputMoveTo(text, x, y):
    loop = True
    while (loop):
@@ -131,11 +97,11 @@ def inputMoveTo(text, x, y):
       # check piece type and return equivilent available spaces
       # compare available spaces with input space
       
-      arrayOfSpaces = returnListOfAvailableSpaces(x,y)
+      arrayOfSpaces = myBoard.returnListOfAvailableSpaces(x,y)
       pieceType = myBoard.returnPieceType(x, y)
       arrayOfSpacesEnPassant = []
       if pieceType is 'pawn':
-         arrayOfSpacesEnPassant = returnEnPassantAvailableSpaces(x, y)
+         arrayOfSpacesEnPassant = myBoard.returnEnPassantAvailableSpaces(x, y)
       
       print(arrayOfSpaces)
       newSpace = [newXValue,newYValue]
@@ -182,4 +148,3 @@ def gameLoop():
 myBoard = board.Board()
 myBoard.printBoard()
 gameLoop()
-

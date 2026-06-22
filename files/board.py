@@ -10,7 +10,8 @@ class Board():
       board[1][0] = square.Square('knight', 'white')
       board[2][0] = square.Square('bishop', 'white')
       board[3][0] = square.Square('queen', 'white')
-      board[4][0] = square.Square('king', 'white')
+      ##board[4][0] = square.Square('king', 'white')
+      board[4][4] = square.Square('king', 'white')
       board[5][0] = square.Square('bishop', 'white')
       board[6][0] = square.Square('knight', 'white')
       board[7][0] = square.Square('rook', 'white')
@@ -22,7 +23,8 @@ class Board():
       board[1][7] = square.Square('knight', 'black')
       board[2][7] = square.Square('bishop', 'black')
       board[3][7] = square.Square('queen', 'black')
-      board[4][7] = square.Square('king', 'black')
+      # board[4][7] = square.Square('king', 'black')
+      board[4][2] = square.Square('king', 'black')
       board[5][7] = square.Square('bishop', 'black')
       board[6][7] = square.Square('knight', 'black')
       board[7][7] = square.Square('rook', 'black')
@@ -108,16 +110,34 @@ class Board():
    def whereCanKingMove(self, x, y):
       myPiece = self.board[x][y]
       arrayOfSpaces = []
-      for x in range(3):
-         xInLoop = x - 1 + x
-         if xInLoop <= 7 and xInLoop >= 0:
-            for y in range(3):
-               yInLoop = y - 1 + y
-               if yInLoop <= 7 and yInLoop >= 0:
-                  arrayOfSpaces.append([xInLoop, yInLoop])
-
+      for i in range(3):
+         for j in range(3): ##x + (i + 1)
+            newX = x + i - 1
+            newY = y + j - 1
+            answer = self.movementPlacementLogic(x,y,newX,newY)
+            ## if king can move and not in proximity to king
+            # if where king moves is in somewhere it'll put it in check
+            if self.canIMoveHere(answer) and not self.isSpaceInProximityToKing(x,y,newX,newY):
+               arrayOfSpaces.append([newX, newY])
       return arrayOfSpaces
-   # queen can move anywhere so long as either x or y (but not both) doesnt change or the different between x and y is the same and a piece isnt in the way
+
+   def isSpaceInProximityToKing(self, x, y, newX, newY):
+      myKing = self.board[x][y]
+      if myKing.getColour() is 'white':
+         otherKing = self.findPieceLocation('king', 'black')
+      else:
+         otherKing = self.findPieceLocation('king', 'white')
+      otherKingX = otherKing[0]
+      otherKingY = otherKing[1]
+
+      for i in range(3):
+         for j in range(3):
+            checkingX = otherKingX + i - 1
+            checkingY = otherKingY + j - 1
+            if (checkingX is newX and checkingY is newY):
+               return True
+      return False
+
    def whereCanQueenMove(self, x, y):
       arrayOfSpaces = self.calculateOrthogonalMovement(x,y)
       arrayOfDiagonalSpaces = self.calculateDiagonalMovement(x,y)
@@ -365,27 +385,58 @@ class Board():
 
       return arrayOfSpaces
    
+   def returnListOfAvailableSpaces(self, x, y):
+      pieceType = self.returnPieceType(x, y)
+      arrayOfSpaces = []
+      match pieceType:
+         case 'pawn':
+            arrayOfSpaces = self.whereCanPawnMove(x,y)
+         case 'knight':
+            arrayOfSpaces = self.whereCanKnightMove(x,y)
+         case 'bishop':
+            arrayOfSpaces = self.whereCanBishopMove(x,y)
+         case 'rook':
+            arrayOfSpaces = self.whereCanRookMove(x,y)
+         case 'queen':
+            arrayOfSpaces = self.whereCanQueenMove(x,y)
+         case 'king':
+            arrayOfSpaces = self.whereCanKingMove(x,y)
+      return arrayOfSpaces
+
+   def returnEnPassantAvailableSpaces(self, x, y):
+      arrayOfSpacesEnPassant = self.whereCanPawnEnPassant(x,y)
+      return arrayOfSpacesEnPassant
+
+   def canPieceMove(self, x, y):
+      arrayOfSpaces = self.returnListOfAvailableSpaces(x,y)
+      arrayOfSpacesEnPassant = []
+      pieceType = self.returnPieceType(x, y)
+
+      print(arrayOfSpaces)
+
+      if pieceType is 'pawn':
+         arrayOfSpacesEnPassant = self.returnEnPassantAvailableSpaces(x, y)
+      if not arrayOfSpaces and not arrayOfSpacesEnPassant:
+         return False
+      return True
+
    def checkForCheck(self, colour):
       kingSpace = self.findPieceLocation('king', colour)
-      kingX = kingSpace[0]
-      kingY = kingSpace[1]
-
+      return self.checkForCheckLoop(kingSpace)
+   
+   def willKingBeChecked(self, xToMoveTo, yToMoveTo):
+      ## if a space the space the king may move to causes a check, cannot move
+      # need to fix because calculations rely on current space positions (for example, upright for a pawn is blank so the pawn will not move there, if the space is checked then the king can move there because the pawn says it cant move there.
+      kingSpace = [xToMoveTo, yToMoveTo]
+      return self.checkForCheckLoop(kingSpace)
+   
+   def checkForCheckLoop(self, kingSpace):
       ## calculate where each piece can move on the board and if it overlaps with king, return true
+      # unless piece is pawn, then pawn will check its own spaces
       arrayOfSpaces = []
       for y in range(8):
          for x in range(8):
-            pieceType = self.returnPieceType(x, y)
-            match pieceType:
-               case 'pawn':
-                  arrayOfSpaces = self.whereCanPawnMove(x,y)
-               case 'knight':
-                  arrayOfSpaces = self.whereCanKnightMove(x,y)
-               case 'bishop':
-                  arrayOfSpaces = self.whereCanBishopMove(x,y)
-               case 'rook':
-                  arrayOfSpaces = self.whereCanRookMove(x,y)
-               case 'queen':
-                  arrayOfSpaces = self.whereCanQueenMove(x,y)
+            arrayOfSpaces = self.returnListOfAvailableSpaces(x,y)
             if kingSpace in arrayOfSpaces:
                return True
       return False
