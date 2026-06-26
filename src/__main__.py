@@ -1,5 +1,4 @@
-import board
-import square
+from board import Board
 
 # LIST_OF_VALID_COLUMNS = list(map(chr,range(97, 105))) # a to h
 LIST_OF_VALID_ROWS = list(range(0,8)) # 0 to 7
@@ -145,6 +144,6 @@ def gameLoop():
       if myBoard.checkForCheck(currentColour):
          print("Check!")
 
-myBoard = board.Board()
+myBoard = Board()
 myBoard.printBoard()
 gameLoop()

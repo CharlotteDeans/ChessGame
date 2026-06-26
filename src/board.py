@@ -1,33 +1,33 @@
-import square
+from square import Square
 
 class Board():
    def __init__(self):
-      board = [[square.Square() for x in range(8)] for y in range(8)]
+      board = [[Square() for x in range(8)] for y in range(8)]
       # filling out board
       # first is char, second is num
       # x/y - column/row - char/num
-      board[0][0] = square.Square('rook', 'white')
-      board[1][0] = square.Square('knight', 'white')
-      board[2][0] = square.Square('bishop', 'white')
-      board[3][0] = square.Square('queen', 'white')
-      ##board[4][0] = square.Square('king', 'white')
-      board[4][4] = square.Square('king', 'white')
-      board[5][0] = square.Square('bishop', 'white')
-      board[6][0] = square.Square('knight', 'white')
-      board[7][0] = square.Square('rook', 'white')
+      board[0][0] = Square('rook', 'white')
+      board[1][0] = Square('knight', 'white')
+      board[2][0] = Square('bishop', 'white')
+      board[3][0] = Square('queen', 'white')
+      ##board[4][0] = Square('king', 'white')
+      board[4][4] = Square('king', 'white')
+      board[5][0] = Square('bishop', 'white')
+      board[6][0] = Square('knight', 'white')
+      board[7][0] = Square('rook', 'white')
       for x in range(8):
-         board[x][1] = square.Square('pawn', 'white')
+         board[x][1] = Square('pawn', 'white')
       for x in range(8):
-         board[x][6] = square.Square('pawn', 'black')
-      board[0][7] = square.Square('rook', 'black')
-      board[1][7] = square.Square('knight', 'black')
-      board[2][7] = square.Square('bishop', 'black')
-      board[3][7] = square.Square('queen', 'black')
-      # board[4][7] = square.Square('king', 'black')
-      board[4][2] = square.Square('king', 'black')
-      board[5][7] = square.Square('bishop', 'black')
-      board[6][7] = square.Square('knight', 'black')
-      board[7][7] = square.Square('rook', 'black')
+         board[x][6] = Square('pawn', 'black')
+      board[0][7] = Square('rook', 'black')
+      board[1][7] = Square('knight', 'black')
+      board[2][7] = Square('bishop', 'black')
+      board[3][7] = Square('queen', 'black')
+      # board[4][7] = Square('king', 'black')
+      board[4][2] = Square('king', 'black')
+      board[5][7] = Square('bishop', 'black')
+      board[6][7] = Square('knight', 'black')
+      board[7][7] = Square('rook', 'black')
       self.board = board
 
    def printBoard(self):
@@ -102,10 +102,10 @@ class Board():
          myPiece.switchPieceMoved()
       # then move
       self.board[newX][newY] = self.board[oldX][oldY]
-      self.board[oldX][oldY] = square.Square()
+      self.board[oldX][oldY] = Square()
 
    def killPiece(self, x, y):
-      self.board[x][y] = square.Square()
+      self.board[x][y] = Square()
    ## change so king can't go near other king
    def whereCanKingMove(self, x, y):
       myPiece = self.board[x][y]
@@ -117,7 +117,7 @@ class Board():
             answer = self.movementPlacementLogic(x,y,newX,newY)
             ## if king can move and not in proximity to king
             # if where king moves is in somewhere it'll put it in check
-            if self.canIMoveHere(answer) and not self.isSpaceInProximityToKing(x,y,newX,newY):
+            if self.canIMoveHere(answer) and not self.isSpaceInProximityToKing(x,y,newX,newY) and not self.willKingBeChecked(newX,newY):
                arrayOfSpaces.append([newX, newY])
       return arrayOfSpaces
 
@@ -158,6 +158,8 @@ class Board():
       # if pawn's first move, can move 2 spaces
       arrayOfSpaces = []
       myPiece = self.board[x][y]
+
+      
       pieceColour = myPiece.getColour()
 
       # without taking
@@ -424,15 +426,12 @@ class Board():
       kingSpace = self.findPieceLocation('king', colour)
       return self.checkForCheckLoop(kingSpace)
    
-   def willKingBeChecked(self, xToMoveTo, yToMoveTo):
-      ## if a space the space the king may move to causes a check, cannot move
-      # need to fix because calculations rely on current space positions (for example, upright for a pawn is blank so the pawn will not move there, if the space is checked then the king can move there because the pawn says it cant move there.
+   def willKingBeChecked(self, xToMoveTo, yToMoveTo, colour):
       kingSpace = [xToMoveTo, yToMoveTo]
-      return self.checkForCheckLoop(kingSpace)
+      newBoard = TheoreticalBoard(kingSpace, colour)
+      return newBoard.checkForCheck(colour)
    
    def checkForCheckLoop(self, kingSpace):
-      ## calculate where each piece can move on the board and if it overlaps with king, return true
-      # unless piece is pawn, then pawn will check its own spaces
       arrayOfSpaces = []
       for y in range(8):
          for x in range(8):
